@@ -1,10 +1,40 @@
 import logo from './logo.svg';
 import './App.css';
+import { useEffect, useState } from 'react';
+import Country from './components/Country/Country';
+import Cart from './components/Cart/Cart';
 
 function App() {
+  const [countries, setCountries] = useState([]);
+  const [cart, setCart] = useState([]);
+
+  useEffect(()=> {
+    fetch("https://restcountries.eu/rest/v2/all")
+    .then(res => res.json())
+    .then(data => setCountries(data))
+    .catch(err => console.log(err))
+  }, [])
+
+  const handleAddCountry = (country) => {
+    const newCart = [...cart, country];
+    setCart(newCart);
+  }
   return (
     <div className="App">
-      <header className="App-header">
+      <h1>Country loaded: {countries.length}</h1>
+      <h2>Country added: {cart.length}</h2>
+      <Cart cart={cart}></Cart>
+
+      {/* Send data parent to child  */}
+      <ul>
+        {
+          countries.map (country =><Country country={country} handleAddCountry = {handleAddCountry} key= {country.alpha3Code}></Country>)
+        }
+      </ul>
+
+        
+
+      {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
@@ -17,7 +47,7 @@ function App() {
         >
           Learn React
         </a>
-      </header>
+      </header> */}
     </div>
   );
 }
